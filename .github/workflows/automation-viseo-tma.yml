@@ -20,9 +20,16 @@ on:
 
 jobs:
   validate-pmd:
-    runs-on: ubuntu-latest
-    if: ${{ github.actor != 'dependabot[bot]' }}
-    steps:
+
+        # Surcharge les permissions par défaut pour CE workflow (sarif upload required security-events write)
+        permissions:
+          contents: read
+          security-events: write
+          actions: read
+
+        runs-on: ubuntu-latest
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        steps:
         # ___________________________________________START PACKAGES INSTALLATION_________________________________________________
         # Now we install nodejs in the VM, and specify version 18
         - name: installing node version
