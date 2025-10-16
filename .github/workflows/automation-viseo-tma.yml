@@ -27,6 +27,8 @@ jobs:
         # Now we install nodejs in the VM, and specify version 18
         - name: installing node version
           uses: actions/setup-node@v5
+          with:
+            node-version: '18'
 
         # Installing checkout, fetch depth 0 to see all commits
         - name: 'Checkout source code'
