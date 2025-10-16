@@ -28,4 +28,5 @@
             </aura:set>
         </aura:if>
     </lightning:card>
+    <!-- Modified aura component -->
 </aura:component>
