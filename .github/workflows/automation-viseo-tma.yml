@@ -32,7 +32,7 @@ jobs:
 
         # Installing checkout, fetch depth 0 to see all commits
         - name: 'Checkout source code'
-          uses: actions/checkout@v3
+          uses: actions/checkout@v5
           with:
             fetch-depth: 0
 
@@ -45,7 +45,7 @@ jobs:
         # ~/sfdx/bin/sfdx version allows to verify that sfdx is properly installed by displaying the version
         - name: 'Install Salesforce CLI'
           run: |
-            npm install -g @salesforce/cli
+            npm install -g @salesforce/cli@2.108.6
             sf version
 
         # Then we install the SFDX-Git-Delta plugin
@@ -54,7 +54,7 @@ jobs:
         # sfdx plugins allows to verify that the plugin is properly installed by displaying the list of installed plugins
         - name: 'Installing sfdx git delta'
           run: |
-              echo y | sf plugins install sfdx-git-delta
+              echo y | sf plugins install sfdx-git-delta@6.22.0
               sf plugins
 
         # Install java as it is required for the next step
@@ -66,7 +66,7 @@ jobs:
 
         # Install SFDX scanner
         - name: 'Installing SFDX scanner'
-          run: sf plugins install @salesforce/code-analyzer-pmd
+          run: echo y | sf plugins install @salesforce/sfdx-scanner@4.12.0
 
         # ___________________________________________END PACKAGES INSTALLATION_________________________________________________
 
@@ -99,7 +99,7 @@ jobs:
 
         # Now we upload the .sarif file as explained in the previous step
         - name: Upload SARIF file
-          uses: github/codeql-action/upload-sarif@v1
+          uses: github/codeql-action/upload-sarif@v3
           with:
             sarif_file: changed-sources/apexScanResults.sarif
 
