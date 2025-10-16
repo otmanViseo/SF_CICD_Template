@@ -54,7 +54,7 @@ jobs:
         # sfdx plugins allows to verify that the plugin is properly installed by displaying the list of installed plugins
         - name: 'Installing sfdx git delta'
           run: |
-              sf plugins install sfdx-git-delta --force
+              echo y | sf plugins install sfdx-git-delta
               sf plugins
 
         # Install java as it is required for the next step
