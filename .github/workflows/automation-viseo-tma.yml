@@ -74,7 +74,7 @@ jobs:
 
         # Install SFDX scanner
         - name: 'Installing SFDX scanner'
-          run: sfdx plugins:install @salesforce/sfdx-scanner --verbose
+          run: sfdx plugins:install @salesforce/sfdx-scanner
 
         # ___________________________________________END PACKAGES INSTALLATION_________________________________________________
 
