@@ -28,7 +28,7 @@ jobs:
         - name: installing node version
           uses: actions/setup-node@v5
           with:
-            node-version: '20'
+            node-version: '22'
 
         # Installing checkout, fetch depth 0 to see all commits
         - name: 'Checkout source code'
@@ -45,11 +45,8 @@ jobs:
         # ~/sfdx/bin/sfdx version allows to verify that sfdx is properly installed by displaying the version
         - name: 'Install Salesforce CLI'
           run: |
-            wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
-            mkdir ~/sfdx
-            tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
-            echo "$HOME/sfdx/bin" >> $GITHUB_PATH
-            ~/sfdx/bin/sfdx version
+            npm install -g @salesforce/cli
+            sf version
 
         # Then we install the SFDX-Git-Delta plugin
         # echo y | allows to answer "yes" to all questions asked by the following command but it's better to use --force
@@ -57,15 +54,10 @@ jobs:
         # sfdx plugins allows to verify that the plugin is properly installed by displaying the list of installed plugins
         - name: 'Installing sfdx git delta'
           run: |
-              sfdx plugins:install sfdx-git-delta --force
-              sfdx plugins
+              sf plugins install sfdx-git-delta
+              sf plugins
 
         # Install java as it is required for the next step
-        # apt: default package manager for ubuntu and debian (Advanced Package Tool) used to install system software. Uses the 
-        # official ubuntu repositories. Allows to install applications, libraries, drivers... e.g. Java, Python etc. apt-get is the old command, better to use
-        # apt for new installations.
-        # We don't use npm because npm installs javascript and node.js packages, not java. Java is a system application, requires a system manager
-        # sudo apt-get update: updates the package list
         # default-jdk is the version corresponding to the Ubuntu version (e.g. Ubuntu 24.04 -> OpenJDK 21)
         - name: 'Installing java'
           run: |
@@ -74,7 +66,7 @@ jobs:
 
         # Install SFDX scanner
         - name: 'Installing SFDX scanner'
-          run: sfdx plugins:install @salesforce/sfdx-scanner
+          run: sf plugins install @salesforce/code-analyzer-pmd
 
         # ___________________________________________END PACKAGES INSTALLATION_________________________________________________
 
@@ -88,13 +80,13 @@ jobs:
           
         # Authenticate to org using the URL stored in the text file
         - name: 'Authenticate to Integration Org'
-          run: sfdx auth:sfdxurl:store -f ./SFDX_INTEGRATION_URL.txt -s -a integration
+          run: sf org login sfdx-url --sfdx-url-file ./SFDX_INTEGRATION_URL.txt --set-default --alias integration
 
         # This command generates a delta between the SHA of the head of the PR feature and the SHA of the HEAD of the target branch of the PR
         - name: 'Create delta packages for new, modified or deleted metadata'
           run: | 
             mkdir changed-sources
-            sfdx sgd:source:delta --to "HEAD" --from "${{github.event.pull_request.base.sha}}" --output changed-sources/ --generate-delta --source force-app/
+            sf sgd source delta --to "HEAD" --from "${{github.event.pull_request.base.sha}}" --output changed-sources/ --generate-delta --source force-app/
             echo 'delta package generated ! between PR HEAD SHA1 :${{github.event.pull_request.head.sha}} and PR Target Branch SHA1 :${{github.event.pull_request.base.sha}}'
           
         # The .sarif file can later be uploaded to github, so that we can see the 
@@ -102,7 +94,7 @@ jobs:
         - name: 'Scan code'
           run: |
               cd changed-sources
-              sfdx scanner:run --format sarif --target './**/*.cls' --category "Design,Best Practices,Performance" --outfile 'apexScanResults.sarif'
+              sf scanner run pmd --format sarif --target './**/*.cls' --category "Design,Best Practices,Performance" --outfile 'apexScanResults.sarif'
               cd ..
 
         # Now we upload the .sarif file as explained in the previous step
@@ -118,7 +110,7 @@ jobs:
         - name: 'Check-only deploy delta changes - run specified tests'
           run: |
               echo ${{env.APEX_TESTS}}
-              sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel RunSpecifiedTests --runtests ${{env.APEX_TESTS}} --json
+              sf project deploy start --source-dir "changed-sources/force-app" --dry-run --test-level RunSpecifiedTests --tests ${{env.APEX_TESTS}} --json
 
 
         # - name: 'Deploy destructive changes (if any)'
