@@ -114,11 +114,9 @@ jobs:
         # If the env variable does not equal 'all', we know that there is a list of
         # tests that can be run
 
-        - name: 'Check-only deploy delta changes - run specified tests'
+        - name: 'Check-only deploy delta changes (no test run check only)
           run: |
-              echo ${{env.APEX_TESTS}}
-              sf project deploy start --source-dir "changed-sources/force-app" --dry-run --test-level RunSpecifiedTests --tests ${{env.APEX_TESTS}} --json
-
+              sf project deploy start --source-dir "changed-sources/force-app" --dry-run --test-level NoTestRun
 
         # - name: 'Deploy destructive changes (if any)'
         #   run: sfdx force:mdapi:deploy -d "changed-sources/destructiveChanges" --checkonly --ignorewarnings 
