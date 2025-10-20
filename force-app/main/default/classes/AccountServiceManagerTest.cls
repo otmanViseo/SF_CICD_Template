@@ -20,4 +20,5 @@ private class AccountServiceManagerTest {
         Assert.areEqual(1, accounts.size(), 'Should return 1 account via service');
         Assert.areEqual('Service Test Account', accounts[0].Name, 'Account name should match');
     }
+    
 }

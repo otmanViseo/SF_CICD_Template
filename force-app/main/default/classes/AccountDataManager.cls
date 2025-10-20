@@ -16,4 +16,5 @@ public with sharing class AccountDataManager {
             LIMIT 100
         ];
     }
+    
 }

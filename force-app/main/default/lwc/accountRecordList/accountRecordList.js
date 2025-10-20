@@ -12,4 +12,5 @@ export default class AccountRecordList extends LightningElement {
             console.error('Erreur lors du chargement des comptes:', error);
         }
     }
+    
 }
