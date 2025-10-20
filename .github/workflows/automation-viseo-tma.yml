@@ -116,6 +116,12 @@ jobs:
               echo "SARIF file content:"
               cat changed-sources/apexScanResults.sarif
 
+        # Display the content of the changed-sources directory for debug
+        - name: 'Display changed-sources directory content'
+          run: |
+              echo "Changed sources directory content:"
+              ls -R changed-sources/
+
         # We do a check-only deploy and we only run the tests specified in the PR
         # If the env variable does not equal 'all', we know that there is a list of
         # tests that can be run
