@@ -100,8 +100,7 @@ jobs:
         # results of the scan directly from the PR.
         - name: 'Scan code'
           run: |
-              cd changed-sources
-              sf scanner run --engine pmd --format sarif --target './**/*.cls' --category "Best Practices,Code Style,Design,Documentation,Error Prone,Performance,Security" --outfile 'apexScanResults.sarif'
+              sf scanner run --engine pmd --format sarif --target 'changed-sources/**/*.cls' --category "Best Practices,Code Style,Design,Documentation,Error Prone,Performance,Security" --outfile 'apexScanResults.sarif'
               cd ..
 
         # Now we upload the .sarif file as explained in the previous step
@@ -132,4 +131,4 @@ jobs:
 
         # - name: 'Deploy destructive changes (if any)'
         #   run: sfdx force:mdapi:deploy -d "changed-sources/destructiveChanges" --checkonly --ignorewarnings 
-        
+
