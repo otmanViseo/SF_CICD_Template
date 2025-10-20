@@ -11,4 +11,5 @@ public with sharing class AccountController {
     public static List<Account> getAllAccounts() {
         return AccountServiceManager.getAllAccounts(); 
     }
+    
 }
