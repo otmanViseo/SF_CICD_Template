@@ -101,7 +101,7 @@ jobs:
         - name: 'Scan code'
           run: |
               cd changed-sources
-              sf scanner run --engine pmd --format sarif --target './**/*.cls' --category "Design,Best Practices,Performance" --outfile 'apexScanResults.sarif'
+              sf scanner run --engine pmd --format sarif --target './**/*.cls' --category "Best Practices,Code Style,Design,Documentation,Error Prone,Performance,Security" --outfile 'apexScanResults.sarif'
               cd ..
 
         # Now we upload the .sarif file as explained in the previous step
@@ -109,6 +109,12 @@ jobs:
           uses: github/codeql-action/upload-sarif@v3
           with:
             sarif_file: changed-sources/apexScanResults.sarif
+
+        # display sarif file content for debug
+        - name: 'Display SARIF file content'
+          run: |
+              echo "SARIF file content:"
+              cat changed-sources/apexScanResults.sarif
 
         # We do a check-only deploy and we only run the tests specified in the PR
         # If the env variable does not equal 'all', we know that there is a list of
