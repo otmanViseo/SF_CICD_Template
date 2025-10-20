@@ -18,6 +18,6 @@ private class AccountControllerTest {
         Test.stopTest();
         
         Assert.areEqual(1, accounts.size(), 'Should return 1 account via controller');
-        Assert.areEqual('Controller Test Account', accounts[0].Name, 'Account name should match');
+        Assert.areEqual('Controller Test Account', accounts[0].Name, 'Account name should match'); 
     }
 }
