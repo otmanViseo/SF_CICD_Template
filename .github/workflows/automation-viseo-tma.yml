@@ -109,14 +109,14 @@ jobs:
               sf code-analyzer rules --rule-selector pmd --target 'changed-sources/**/*.cls' --output-file 'apexScanResults.sarif.json'
               
         # afficher dossier changed-sources pour debug
-        - name: 'List Apex files to scan'
-          run: tree -L 10 changed-sources/
+        # - name: 'List Apex files to scan'
+        #   run: tree -L 10 changed-sources/
 
         # Display generated apex code file for debug
-        - name: 'Display AccountController.cls file content and js file content'
-          run: |
-              cat changed-sources/force-app/main/default/classes/AccountController.cls
-              cat changed-sources/force-app/main/default/classes/AccountControllerTest.cls
+        # - name: 'Display AccountController.cls file content and js file content'
+        #   run: |
+        #       cat changed-sources/force-app/main/default/classes/AccountController.cls
+        #       cat changed-sources/force-app/main/default/classes/AccountControllerTest.cls
 
         # display full directory tree for debug
         # - name: 'Display complete directory tree'
@@ -128,13 +128,13 @@ jobs:
         - name: 'Display SARIF file content'
           run: |
               echo "SARIF file content:"
-              cat apexScanResults.sarif
+              cat apexScanResults.sarif.json
 
         # Now we upload the .sarif file as explained in the previous step
         - name: Upload SARIF file
           uses: github/codeql-action/upload-sarif@v3
           with:
-            sarif_file: apexScanResults.sarif
+            sarif_file: apexScanResults.sarif.json
 
         # We do a check-only deploy and we only run the tests specified in the PR
         # If the env variable does not equal 'all', we know that there is a list of
