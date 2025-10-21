@@ -106,7 +106,7 @@ jobs:
         # results of the scan directly from the PR.
         - name: '@Salesforce/plugin-code-analyzer run pmd default rule'
           run: |
-              sf code analyzer run --rule-selector pmd --target 'changed-sources/**/*.cls' --output-file 'apexScanResults.sarif'
+              sf code-analyzer rules --rule-selector pmd --target 'changed-sources/**/*.cls' --output-file 'apexScanResults.sarif'
               
         # afficher dossier changed-sources pour debug
         - name: 'List Apex files to scan'
