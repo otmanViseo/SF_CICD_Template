@@ -73,7 +73,7 @@ jobs:
 
         # Install SFDX scanner
         - name: 'Installing SFDX scanner'
-          run: echo y | sf plugins install @salesforce/code-analyzer@5.5.0
+          run: echo y | sf plugins install @salesforce/plugin-code-analyzer@5.5.0
 
         # ___________________________________________END PACKAGES INSTALLATION_________________________________________________
 
