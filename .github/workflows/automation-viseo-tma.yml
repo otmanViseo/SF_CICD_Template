@@ -109,11 +109,15 @@ jobs:
               sf scanner run --engine pmd --format sarif --target 'changed-sources/**/*.cls' --category "Best Practices,Code Style,Design,Documentation,Error Prone,Performance,Security" --outfile 'apexScanResults.sarif'
               cd ..
 
+        # afficher dossier changed-sources pour debug
+        - name: 'List Apex files to scan'
+          run: tree -L 10 changed-sources
+
         # display full directory tree for debug
-        - name: 'Display complete directory tree'
-          run: |
-            sudo apt-get install -y tree
-            tree -L 10 /home/runner/work/
+        # - name: 'Display complete directory tree'
+        #   run: |
+        #     sudo apt-get install -y tree
+        #     tree -L 10 /home/runner/work/
 
         # display sarif file content for debug
         - name: 'Display SARIF file content'
