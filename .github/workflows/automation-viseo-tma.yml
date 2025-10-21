@@ -113,6 +113,12 @@ jobs:
         - name: 'List Apex files to scan'
           run: tree -L 10 changed-sources/
 
+        # Display generated apex code file for debug
+        - name: 'Display AccountController.cls file content and js file content'
+          run: |
+              cat changed-sources/force-app/main/default/classes/AccountController.cls
+              cat changed-sources/force-app/main/default/classes/AccountControllerTest.cls
+
         # display full directory tree for debug
         # - name: 'Display complete directory tree'
         #   run: |
