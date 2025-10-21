@@ -106,12 +106,12 @@ jobs:
         # results of the scan directly from the PR.
         - name: 'Scan code'
           run: |
-              sf scanner run --engine pmd --format sarif --target 'changed-sources/**/*.cls' --category "Best Practices,Code Style,Design,Documentation,Error Prone,Performance,Security" --outfile 'apexScanResults.sarif'
+              sf scanner run --engine pmd --format sarif --target 'changed-sources/**/*.cls' --category "Best Practices,Code Style,Design,Documentation,Error Prone,Performance,Security" --outfile 'apexScanResults.sarif' --verbose
               cd ..
 
         # afficher dossier changed-sources pour debug
         - name: 'List Apex files to scan'
-          run: tree -L 10 changed-sources
+          run: tree -L 10 changed-sources/
 
         # display full directory tree for debug
         # - name: 'Display complete directory tree'
