@@ -73,7 +73,7 @@ jobs:
 
         # Install SFDX scanner
         - name: 'Installing SFDX scanner'
-          run: echo y | sf plugins install @salesforce/sfdx-scanner@5.3.0
+          run: echo y | sf plugins install @salesforce/code-analyzer@5.5.0
 
         # ___________________________________________END PACKAGES INSTALLATION_________________________________________________
 
@@ -106,9 +106,8 @@ jobs:
         # results of the scan directly from the PR.
         - name: 'Scan code'
           run: |
-              sf scanner run --engine pmd --format sarif --target 'changed-sources/**/*.cls' --category "Best Practices,Code Style,Design,Documentation,Error Prone,Performance,Security" --outfile 'apexScanResults.sarif' --verbose
-              cd ..
-
+              sf scanner run --rule-selector pmd --target 'changed-sources/**/*.cls' --output-file 'apexScanResults.sarif'
+              
         # afficher dossier changed-sources pour debug
         - name: 'List Apex files to scan'
           run: tree -L 10 changed-sources/
