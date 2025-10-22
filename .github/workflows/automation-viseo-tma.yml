@@ -1,3 +1,19 @@
+# afficher dossier changed-sources pour debug
+# - name: 'List Apex files to scan'
+#   run: tree -L 10 changed-sources/
+
+# Display generated apex code file for debug
+# - name: 'Display AccountController.cls file content and js file content'
+#   run: |
+#       cat changed-sources/force-app/main/default/classes/AccountController.cls
+#       cat changed-sources/force-app/main/default/classes/AccountControllerTest.cls
+
+# display full directory tree for debug
+# - name: 'Display complete directory tree'
+#   run: |
+#     sudo apt-get install -y tree
+#     tree -L 10 /home/runner/work/
+
 name: Validate PR on develop branch
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 
@@ -102,40 +118,6 @@ jobs:
               echo "Changed sources directory content:"
               ls -R changed-sources/
           
-        # The .sarif file can later be uploaded to github, so that we can see the 
-        # results of the scan directly from the PR.
-        - name: '@Salesforce/plugin-code-analyzer run all default rule'
-          run: |
-              sf code-analyzer run --rule-selector pmd --rule-selector eslint --target 'changed-sources/**/*' --output-file 'pmdScanResults.sarif.json'
-              
-        # afficher dossier changed-sources pour debug
-        # - name: 'List Apex files to scan'
-        #   run: tree -L 10 changed-sources/
-
-        # Display generated apex code file for debug
-        # - name: 'Display AccountController.cls file content and js file content'
-        #   run: |
-        #       cat changed-sources/force-app/main/default/classes/AccountController.cls
-        #       cat changed-sources/force-app/main/default/classes/AccountControllerTest.cls
-
-        # display full directory tree for debug
-        # - name: 'Display complete directory tree'
-        #   run: |
-        #     sudo apt-get install -y tree
-        #     tree -L 10 /home/runner/work/
-
-        # display sarif file content for debug
-        - name: 'Display SARIF file content'
-          run: |
-              echo "SARIF file content:"
-              cat pmdScanResults.sarif.json
-
-        # Now we upload the .sarif file as explained in the previous step
-        - name: Upload SARIF file
-          uses: github/codeql-action/upload-sarif@v3
-          with:
-            sarif_file: pmdScanResults.sarif.json
-
         # This step add in the changed-sources/force-app/main/default/classes/ all the apex classes that have the "Test" suffix of a modified apex test
         - name: 'Add modified apex test classes to deployment package'
           run: |
@@ -155,11 +137,28 @@ jobs:
               fi
             done
 
-        # display changed-sources/force-app/main/default/classes/
-        - name: 'display changed-sources/force-app/main/default/classes/'
+        # display full directory tree for debug
+        - name: 'Display complete directory tree'
           run: |
-            ls changed-sources/force-app/main/default/classes/
+            sudo apt-get install -y tree
+            tree -L 10 /home/runner/work/
 
+        # The .sarif file can later be uploaded to github, so that we can see the 
+        # results of the scan directly from the PR.
+        - name: '@Salesforce/plugin-code-analyzer run all default rule'
+          run: |
+              sf code-analyzer run --rule-selector pmd --rule-selector eslint --target 'changed-sources/**/*' --output-file 'pmdScanResults.sarif.json'
+              
+        # display sarif file content for debug
+        - name: 'Display SARIF file content'
+          run: |
+              cat pmdScanResults.sarif.json
+
+        # Now we upload the .sarif file as explained in the previous step
+        - name: Upload SARIF file
+          uses: github/codeql-action/upload-sarif@v3
+          with:
+            sarif_file: pmdScanResults.sarif.json
 
         # We do a check-only deploy and we only run the tests specified in the PR
         # If the env variable does not equal 'all', we know that there is a list of
