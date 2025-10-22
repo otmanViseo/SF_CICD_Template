@@ -11,5 +11,4 @@ public with sharing class AccountServiceManager {
     public static List<Account> getAllAccounts() {
         return AccountDataManager.getAllAccounts();
     }
-    
 }

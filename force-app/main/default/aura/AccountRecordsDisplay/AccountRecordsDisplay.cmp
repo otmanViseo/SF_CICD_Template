@@ -2,6 +2,14 @@
     <aura:attribute name="accounts" type="Account[]"/>
     
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <!--
+        pmd rule AvoidHardCodedCredentials High(2) violation 
+        https://developer.salesforce.com/docs/platform/salesforce-code-analyzer/guide/rules-pmd-appexchange.html#avoidhardcodedcredentialsinaura
+    -->
+    <aura:attribute name="password" type="string" default="123456890"/>
+    <aura:attribute name="apikey" type="string" default="123456890"/>
+    <aura:attribute name="authtoken" type="string" default="123456890"/>
     
     <lightning:card title="Comptes (Aura)">
         <aura:if isTrue="{!v.accounts.length > 0}">
@@ -28,5 +36,4 @@
             </aura:set>
         </aura:if>
     </lightning:card>
-    
 </aura:component> 
