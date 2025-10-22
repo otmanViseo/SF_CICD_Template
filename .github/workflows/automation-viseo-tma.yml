@@ -156,7 +156,7 @@ jobs:
             done
 
         # display changed-sources/force-app/main/default/classes/
-        - name: 'display changed-sources/force-app/main/default/classes/
+        - name: 'display changed-sources/force-app/main/default/classes/'
           run: |
             ls changed-sources/force-app/main/default/classes/
 
