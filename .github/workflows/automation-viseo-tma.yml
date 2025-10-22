@@ -1,3 +1,19 @@
+# afficher dossier changed-sources pour debug
+# - name: 'List Apex files to scan'
+#   run: tree -L 10 changed-sources/
+
+# Display generated apex code file for debug
+# - name: 'Display AccountController.cls file content and js file content'
+#   run: |
+#       cat changed-sources/force-app/main/default/classes/AccountController.cls
+#       cat changed-sources/force-app/main/default/classes/AccountControllerTest.cls
+
+# display full directory tree for debug
+# - name: 'Display complete directory tree'
+#   run: |
+#     sudo apt-get install -y tree
+#     tree -L 10 /home/runner/work/
+
 name: Validate PR on develop branch
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 
@@ -102,32 +118,40 @@ jobs:
               echo "Changed sources directory content:"
               ls -R changed-sources/
           
+        # This step add in the changed-sources/force-app/main/default/classes/ all the apex classes that have the "Test" suffix of a modified apex test
+        - name: 'Add modified apex test classes to deployment package'
+          run: |
+            for file in changed-sources/force-app/main/default/classes/*.cls; do
+              base_name=$(basename "$file" .cls)
+              if [[ ! "$base_name" =~ Test$ ]]; then
+                test_class="force-app/main/default/classes/${base_name}Test.cls"
+                test_meta="force-app/main/default/classes/${base_name}Test.cls-meta.xml"
+                dest_class="changed-sources/force-app/main/default/classes/${base_name}Test.cls"
+                dest_meta="changed-sources/force-app/main/default/classes/${base_name}Test.cls-meta.xml"
+                if [ -f "$test_class" ] && [ ! -f "$dest_class" ]; then
+                  cp "$test_class" changed-sources/force-app/main/default/classes/
+                  if [ -f "$test_meta" ] && [ ! -f "$dest_meta" ]; then
+                    cp "$test_meta" changed-sources/force-app/main/default/classes/
+                  fi
+                fi
+              fi
+            done
+
+        # display full directory tree for debug
+        - name: 'Display complete directory tree'
+          run: |
+            sudo apt-get install -y tree
+            tree -L 10 /home/runner/work/
+
         # The .sarif file can later be uploaded to github, so that we can see the 
         # results of the scan directly from the PR.
         - name: '@Salesforce/plugin-code-analyzer run all default rule'
           run: |
               sf code-analyzer run --rule-selector pmd --rule-selector eslint --target 'changed-sources/**/*' --output-file 'pmdScanResults.sarif.json'
               
-        # afficher dossier changed-sources pour debug
-        # - name: 'List Apex files to scan'
-        #   run: tree -L 10 changed-sources/
-
-        # Display generated apex code file for debug
-        # - name: 'Display AccountController.cls file content and js file content'
-        #   run: |
-        #       cat changed-sources/force-app/main/default/classes/AccountController.cls
-        #       cat changed-sources/force-app/main/default/classes/AccountControllerTest.cls
-
-        # display full directory tree for debug
-        # - name: 'Display complete directory tree'
-        #   run: |
-        #     sudo apt-get install -y tree
-        #     tree -L 10 /home/runner/work/
-
         # display sarif file content for debug
         - name: 'Display SARIF file content'
           run: |
-              echo "SARIF file content:"
               cat pmdScanResults.sarif.json
 
         # Now we upload the .sarif file as explained in the previous step
@@ -140,9 +164,9 @@ jobs:
         # If the env variable does not equal 'all', we know that there is a list of
         # tests that can be run
 
-        # - name: 'Check-only deploy delta changes (no test run check only)
-        #   run: |
-        #       sf project deploy start --source-dir "changed-sources/force-app" --dry-run --test-level NoTestRun
+        - name: 'Check conf and tests on changed sources folder'
+          run: |
+              sf project deploy start --source-dir changed-sources/force-app --dry-run --test-level RunLocalTests
 
         # - name: 'Deploy destructive changes (if any)'
         #   run: sfdx force:mdapi:deploy -d "changed-sources/destructiveChanges" --checkonly --ignorewarnings 
