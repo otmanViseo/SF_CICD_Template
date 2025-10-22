@@ -104,9 +104,9 @@ jobs:
           
         # The .sarif file can later be uploaded to github, so that we can see the 
         # results of the scan directly from the PR.
-        - name: '@Salesforce/plugin-code-analyzer run pmd default rule'
+        - name: '@Salesforce/plugin-code-analyzer run all default rule'
           run: |
-              sf code-analyzer run --rule-selector pmd --target 'changed-sources/**/*.cls' --output-file 'pmdScanResults.sarif.json'
+              sf code-analyzer run --rule-selector pmd --rule-selector eslint --target 'changed-sources/**/*' --output-file 'pmdScanResults.sarif.json'
               
         # afficher dossier changed-sources pour debug
         # - name: 'List Apex files to scan'
