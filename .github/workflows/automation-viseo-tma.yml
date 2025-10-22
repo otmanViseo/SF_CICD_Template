@@ -164,9 +164,9 @@ jobs:
         # If the env variable does not equal 'all', we know that there is a list of
         # tests that can be run
 
-        # - name: 'Check-only deploy delta changes (no test run check only)
-        #   run: |
-        #       sf project deploy start --source-dir "changed-sources/force-app" --dry-run --test-level NoTestRun
+        - name: 'Check conf and tests on changed sources folder
+          run: |
+              sf project deploy start --source-dir "changed-sources/force-app" --dry-run --test-level RunLocalTests
 
         # - name: 'Deploy destructive changes (if any)'
         #   run: sfdx force:mdapi:deploy -d "changed-sources/destructiveChanges" --checkonly --ignorewarnings 
