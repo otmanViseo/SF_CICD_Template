@@ -136,6 +136,31 @@ jobs:
           with:
             sarif_file: pmdScanResults.sarif.json
 
+        # This step add in the changed-sources/force-app/main/default/classes/ all the apex classes that have the "Test" suffix of a modified apex test
+        - name: 'Add modified apex test classes to deployment package'
+          run: |
+            for file in changed-sources/force-app/main/default/classes/*.cls; do
+              base_name=$(basename "$file" .cls)
+              if [[ ! "$base_name" =~ Test$ ]]; then
+                test_class="force-app/main/default/classes/${base_name}Test.cls"
+                test_meta="force-app/main/default/classes/${base_name}Test.cls-meta.xml"
+                dest_class="changed-sources/force-app/main/default/classes/${base_name}Test.cls"
+                dest_meta="changed-sources/force-app/main/default/classes/${base_name}Test.cls-meta.xml"
+                if [ -f "$test_class" ] && [ ! -f "$dest_class" ]; then
+                  cp "$test_class" changed-sources/force-app/main/default/classes/
+                  if [ -f "$test_meta" ] && [ ! -f "$dest_meta" ]; then
+                    cp "$test_meta" changed-sources/force-app/main/default/classes/
+                  fi
+                fi
+              fi
+            done
+
+        # display changed-sources/force-app/main/default/classes/
+        - name: 'display changed-sources/force-app/main/default/classes/
+          run: |
+            ls changed-sources/force-app/main/default/classes/
+
+
         # We do a check-only deploy and we only run the tests specified in the PR
         # If the env variable does not equal 'all', we know that there is a list of
         # tests that can be run
