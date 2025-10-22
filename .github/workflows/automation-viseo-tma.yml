@@ -16,7 +16,7 @@ on:
         # root directory of the sfdx project. This prevents the job from running
         # when changing non-salesforce files (like this yml file).
         paths:
-        - 'force-app/**'
+        # - 'force-app/**'
 
 jobs:
   validate-pmd:
@@ -27,7 +27,7 @@ jobs:
           security-events: write
           actions: read
 
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         if: ${{ github.actor != 'dependabot[bot]' }}
         steps:
         # ___________________________________________START PACKAGES INSTALLATION_________________________________________________
@@ -73,7 +73,7 @@ jobs:
 
         # Install SFDX scanner
         - name: 'Installing SFDX scanner'
-          run: echo y | sf plugins install @salesforce/sfdx-scanner@4.12.0
+          run: echo y | sf plugins install @salesforce/plugin-code-analyzer@5.5.0
 
         # ___________________________________________END PACKAGES INSTALLATION_________________________________________________
 
@@ -93,30 +93,57 @@ jobs:
         - name: 'Create delta packages for new, modified or deleted metadata'
           run: | 
             mkdir changed-sources
-            sf sgd source delta --to "HEAD" --from "${{github.event.pull_request.base.sha}}" --output changed-sources/ --generate-delta --source force-app/
+            sf sgd source delta --to "HEAD" --from "${{github.event.pull_request.base.sha}}" --output-dir changed-sources/ --generate-delta --source-dir force-app/
             echo 'delta package generated ! between PR HEAD SHA1 :${{github.event.pull_request.head.sha}} and PR Target Branch SHA1 :${{github.event.pull_request.base.sha}}'
+
+        # Display the content of the changed-sources directory for debug
+        - name: 'Display changed-sources directory content'
+          run: |
+              echo "Changed sources directory content:"
+              ls -R changed-sources/
           
         # The .sarif file can later be uploaded to github, so that we can see the 
         # results of the scan directly from the PR.
-        - name: 'Scan code'
+        - name: '@Salesforce/plugin-code-analyzer run all default rule'
           run: |
-              cd changed-sources
-              sf scanner run --engine pmd --format sarif --target './**/*.cls' --category "Design,Best Practices,Performance" --outfile 'apexScanResults.sarif'
-              cd ..
+              sf code-analyzer run --rule-selector pmd --rule-selector eslint --target 'changed-sources/**/*' --output-file 'pmdScanResults.sarif.json'
+              
+        # afficher dossier changed-sources pour debug
+        # - name: 'List Apex files to scan'
+        #   run: tree -L 10 changed-sources/
+
+        # Display generated apex code file for debug
+        # - name: 'Display AccountController.cls file content and js file content'
+        #   run: |
+        #       cat changed-sources/force-app/main/default/classes/AccountController.cls
+        #       cat changed-sources/force-app/main/default/classes/AccountControllerTest.cls
+
+        # display full directory tree for debug
+        # - name: 'Display complete directory tree'
+        #   run: |
+        #     sudo apt-get install -y tree
+        #     tree -L 10 /home/runner/work/
+
+        # display sarif file content for debug
+        - name: 'Display SARIF file content'
+          run: |
+              echo "SARIF file content:"
+              cat pmdScanResults.sarif.json
 
         # Now we upload the .sarif file as explained in the previous step
         - name: Upload SARIF file
           uses: github/codeql-action/upload-sarif@v3
           with:
-            sarif_file: changed-sources/apexScanResults.sarif
+            sarif_file: pmdScanResults.sarif.json
 
         # We do a check-only deploy and we only run the tests specified in the PR
         # If the env variable does not equal 'all', we know that there is a list of
         # tests that can be run
 
-        - name: 'Check-only deploy delta changes (no test run check only)
-          run: |
-              sf project deploy start --source-dir "changed-sources/force-app" --dry-run --test-level NoTestRun
+        # - name: 'Check-only deploy delta changes (no test run check only)
+        #   run: |
+        #       sf project deploy start --source-dir "changed-sources/force-app" --dry-run --test-level NoTestRun
 
         # - name: 'Deploy destructive changes (if any)'
         #   run: sfdx force:mdapi:deploy -d "changed-sources/destructiveChanges" --checkonly --ignorewarnings 
+

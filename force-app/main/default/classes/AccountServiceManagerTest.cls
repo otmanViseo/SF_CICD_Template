@@ -1,4 +1,4 @@
-@isTest
+@IsTest
 private class AccountServiceManagerTest {
     
     @TestSetup
@@ -11,7 +11,7 @@ private class AccountServiceManagerTest {
         insert testAccount;
     }
     
-    @isTest
+    @IsTest
     static void testGetAllAccounts() {
         Test.startTest();
         List<Account> accounts = AccountServiceManager.getAllAccounts();

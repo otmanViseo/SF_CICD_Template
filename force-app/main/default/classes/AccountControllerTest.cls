@@ -1,3 +1,5 @@
+// Bad naming convention in method name to trigger PMD AnnotationsNamingConvention Medium rule.
+// https://pmd.github.io/pmd/pmd_rules_apex_codestyle.html#annotationsnamingconventions
 @isTest
 private class AccountControllerTest {
     
@@ -10,14 +12,16 @@ private class AccountControllerTest {
         );
         insert testAccount;
     }
-    
+    // Bad naming convention in method name to trigger PMD AnnotationsNamingConvention Medium rule.
+    // https://pmd.github.io/pmd/pmd_rules_apex_codestyle.html#annotationsnamingconventions
     @isTest
     static void testGetAllAccounts() {
         Test.startTest();
         List<Account> accounts = AccountController.getAllAccounts();
         Test.stopTest();
         
-        Assert.areEqual(1, accounts.size(), 'Should return 1 account via controller');
-        Assert.areEqual('Controller Test Account', accounts[0].Name, 'Account name should match'); 
+        // No error message to trigger PMD ApexAssertionsShouldIncludeMessage medium rule
+        Assert.areEqual(1, accounts.size());
+        Assert.areEqual('Controller Test Account', accounts[0].Name);
     }
 }
