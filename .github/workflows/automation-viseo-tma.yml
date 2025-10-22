@@ -164,7 +164,7 @@ jobs:
         # If the env variable does not equal 'all', we know that there is a list of
         # tests that can be run
 
-        - name: 'Check conf and tests on changed sources folder
+        - name: 'Check conf and tests on changed sources folder'
           run: |
               sf project deploy start --source-dir changed-sources/force-app --dry-run --test-level RunLocalTests
 
