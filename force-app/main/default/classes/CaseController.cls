@@ -10,6 +10,5 @@ public with sharing class CaseController {
     @AuraEnabled(cacheable=true)
     public static List<Case> getAllCases() {
         return CaseServiceManager.getAllCases();
-        // useless code to trigger CaseControllerTest validation
     }
 }
