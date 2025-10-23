@@ -2,7 +2,9 @@
  * @description Controller pour les comptes
  */
 public with sharing class AccountController {
-    
+
+    // should be found by AI tool
+    public final Sring UNUSED_VARIABLE = 'This variable is unused'; 
     /**
      * @description Récupère tous les comptes pour les composants UI
      * @return List<Account> Liste des comptes
